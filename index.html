@@ -166,7 +166,32 @@ body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;backgr
 }
 .foot-tap.tapped .foot-tap-chk svg{ opacity:1; }
 
-.foot-hint{
+.balloon{
+  background:#FAF4E8;
+  color:var(--n2);
+  border:1px solid rgba(250,244,232,.3);
+  border-radius:12px;
+  padding:11px 14px;
+  font-size:12px;
+  font-weight:600;
+  line-height:1.65;
+  margin-bottom:10px;
+  position:relative;
+  opacity:0;
+  transform:translateY(6px);
+  transition:opacity .25s, transform .25s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;
+}
+.balloon.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+.balloon::after{
+  content:'';
+  position:absolute;
+  bottom:-7px;left:50%;
+  transform:translateX(-50%);
+  border:7px solid transparent;
+  border-top-color:#FAF4E8;
+  border-bottom:none;
+}
   text-align:center;
   font-size:11px;
   color:rgba(250,244,232,.35);
@@ -329,7 +354,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div><!-- /s1-scroll -->
 
     <div class="s1-bottom">
-      <button class="next-btn" id="nextBtn" onclick="goTo('s1','s2')">
+      <div class="balloon" id="balloon">
+        💡 생·손보협회 휴면보험금 찾기 서비스와는 무관한 별도 서비스입니다.<br>아직 조회 안 해보셨다면 나중에 한 번 해보세요!
+      </div>
+      <button class="next-btn" id="nextBtn" onclick="handleNext()">
         <span>내 보험금 확인하기</span>
         <span style="font-size:16px">→</span>
       </button>
@@ -700,6 +728,18 @@ function tapFoot(el) {
     btn.disabled = false;
     btn.style.opacity = '1';
   }
+}
+
+/* 버튼 클릭 — 풍선 먼저, 1.8초 후 화면 전환 */
+let balloonShown = false;
+function handleNext() {
+  if (!balloonShown) {
+    balloonShown = true;
+    document.getElementById('balloon').classList.add('show');
+    setTimeout(() => goTo('s1','s2'), 2200);
+    return;
+  }
+  goTo('s1','s2');
 }
 
 /* 화면 전환 */
