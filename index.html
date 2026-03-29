@@ -166,34 +166,43 @@ body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;backgr
 }
 .foot-tap.tapped .foot-tap-chk svg{ opacity:1; }
 
-.balloon{
-  position:absolute;
-  bottom:80px;
-  left:16px;right:16px;
-  background:#FAF4E8;
-  color:var(--n2);
-  border:1px solid rgba(250,244,232,.3);
-  border-radius:12px;
-  padding:11px 14px;
-  font-size:12px;
-  font-weight:600;
-  line-height:1.65;
-  z-index:10;
-  opacity:0;
-  transform:translateY(6px);
-  transition:opacity .25s, transform .25s cubic-bezier(.22,1,.36,1);
-  pointer-events:none;
+/* 모달 */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(10,8,4,.72);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  z-index:999;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s;
 }
-.balloon.show{opacity:1;transform:translateY(0);pointer-events:auto;}
-.balloon::after{
-  content:'';
-  position:absolute;
-  bottom:-7px;left:50%;
-  transform:translateX(-50%);
-  border:7px solid transparent;
-  border-top-color:#FAF4E8;
-  border-bottom:none;
+.modal-overlay.show{opacity:1;pointer-events:all;}
+.modal-box{
+  background:var(--base);
+  border-radius:20px;
+  padding:28px 24px 24px;
+  width:100%;max-width:340px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  transform:translateY(16px) scale(.97);
+  transition:transform .3s cubic-bezier(.22,1,.36,1);
 }
+.modal-overlay.show .modal-box{transform:translateY(0) scale(1);}
+.modal-icon{font-size:32px;margin-bottom:12px;}
+.modal-title{font-size:16px;font-weight:900;color:var(--t1);letter-spacing:-.02em;margin-bottom:14px;}
+.modal-body{font-size:13.5px;color:var(--t2);line-height:1.8;margin-bottom:22px;}
+.modal-body strong{color:var(--n2);font-weight:800;}
+.modal-btn{
+  width:100%;padding:15px;
+  background:var(--n2);color:#FAF4E8;
+  border:none;border-radius:var(--r);
+  font-family:inherit;font-size:15px;font-weight:800;
+  cursor:pointer;
+  transition:background .15s, transform .12s;
+}
+.modal-btn:active{background:var(--n3);transform:scale(.98);}
   text-align:center;
   font-size:11px;
   color:rgba(250,244,232,.35);
@@ -355,10 +364,6 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
     </div><!-- /s1-scroll -->
 
-    <div class="balloon" id="balloon">
-      💡 생·손보협회 휴면보험금 찾기 서비스와는 무관한 별도 서비스입니다.<br>아직 조회 안 해보셨다면 나중에 한 번 해보세요!
-    </div>
-
     <div class="s1-bottom">
       <button class="next-btn" id="nextBtn" onclick="handleNext()">
         <span>내 보험금 확인하기</span>
@@ -367,6 +372,19 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
 
   </div><!-- /s1 -->
+
+  <!-- 안내 모달 -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-icon">💡</div>
+      <div class="modal-title">잠깐, 안내드립니다</div>
+      <div class="modal-body">
+        본 서비스는 <strong>생·손보협회에서 운영 중인<br>휴면보험금·숨은보험금 찾기 서비스와는<br>무관한 별도 서비스</strong>입니다.<br><br>
+        협회 서비스를 아직 이용 안 해보셨다면<br>나중에 한 번 조회해보시길 권장드립니다.
+      </div>
+      <button class="modal-btn" onclick="closeModal()">확인했습니다 →</button>
+    </div>
+  </div>
 
   <!-- ══════════════════════════════
        SCREEN 2 — 체크리스트
@@ -733,15 +751,12 @@ function tapFoot(el) {
   }
 }
 
-/* 버튼 클릭 — 풍선 먼저, 1.8초 후 화면 전환 */
-let balloonShown = false;
+/* 버튼 클릭 — 모달 먼저 */
 function handleNext() {
-  if (!balloonShown) {
-    balloonShown = true;
-    document.getElementById('balloon').classList.add('show');
-    setTimeout(() => goTo('s1','s2'), 2200);
-    return;
-  }
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
   goTo('s1','s2');
 }
 
