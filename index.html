@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#1E2D4A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>놓친 보험금 찾기</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+:root{
+  --page:#EDE6D8; --base:#FAF7F2; --raised:#F2EBE0; --sunken:#E8DFD0;
+  --glass:rgba(250,247,242,.92);
+  --t1:#18110A; --t2:#4E3C28; --t3:#8C7460; --t4:#B3A090;
+  --a1:#5C4010; --a2:#7A5520; --a3:#B07830; --a4:#C89850;
+  --a-pale:#F5ECD8; --a-mid:#DFC090;
+  --n1:#101C30; --n2:#1E2D4A; --n3:#2E4570; --n4:#4A6898;
+  --n-pale:#EDF2FA; --n-mid:#C0CFEA;
+  --ok:#2E6644; --ok-bg:#E4F2EB;
+  --err:#9C2A2A;
+  --br:rgba(100,70,30,.1); --br-m:rgba(100,70,30,.18); --br-n:rgba(30,45,74,.12);
+  --r:16px; --r-sm:10px; --r-xs:6px;
+  --sh-card:0 2px 12px rgba(20,12,4,.07);
+  --sh-float:0 8px 32px rgba(20,12,4,.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{-webkit-text-size-adjust:100%;}
+body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;background:var(--page);color:var(--t1);min-height:100dvh;-webkit-font-smoothing:antialiased;overflow:hidden;}
+
+.shell{max-width:390px;margin:0 auto;height:100dvh;background:var(--base);display:flex;flex-direction:column;position:relative;box-shadow:var(--sh-float);overflow:hidden;}
+
+@media(min-width:430px){
+  html{height:100%;}
+  body{overflow:auto;display:flex;align-items:center;justify-content:center;min-height:100%;padding:20px 0;}
+  .shell{width:390px;flex-shrink:0;height:min(844px,92vh);border-radius:24px;}
+}
+
+/* ── SCREEN SYSTEM ── */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s;will-change:transform;overflow:hidden;}
+.screen.active{transform:translateX(0);opacity:1;pointer-events:all;}
+.screen.left  {transform:translateX(-100%);opacity:0;pointer-events:none;}
+.screen.right {transform:translateX(100%);opacity:0;pointer-events:none;}
+
+/* ════════════════════════════════
+   SCREEN 1 — 랜딩 (애니메이션 포함)
+════════════════════════════════ */
+#s1{background:var(--n2);}
+#s1::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0;}
+#s1::after{content:'';position:absolute;top:-80px;right:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(192,152,80,.2),transparent 70%);pointer-events:none;z-index:0;}
+
+/* 페이드업 공통 */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* 배지, 부제목 */
+.s1-badge{
+  position:relative;z-index:1;
+  display:inline-flex;align-items:center;
+  background:rgba(192,152,80,.18);border:1px solid rgba(192,152,80,.38);
+  border-radius:20px;padding:4px 11px;
+  font-size:11px;font-weight:700;color:#D4AC70;letter-spacing:.04em;
+  margin-bottom:14px;
+  animation:fadeUp .5s cubic-bezier(.22,1,.36,1) .05s both;
+}
+.s1-eyebrow{
+  position:relative;z-index:1;
+  font-size:10.5px;font-weight:700;color:#D4AC70;
+  letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px;
+  animation:fadeUp .5s cubic-bezier(.22,1,.36,1) .15s both;
+}
+
+/* 카피 라인들 */
+.cl{position:relative;z-index:1;animation:fadeUp .55s cubic-bezier(.22,1,.36,1) both;}
+.cl.t-sm{font-size:15px;font-weight:700;color:rgba(250,244,232,.65);line-height:1.7;margin-bottom:20px;}
+.cl.t-md{font-size:17px;font-weight:700;color:rgba(250,244,232,.75);line-height:1.7;margin-bottom:8px;}
+.cl.t-lg{font-size:22px;font-weight:900;color:#FAF4E8;line-height:1.5;letter-spacing:-.02em;margin-bottom:8px;}
+.cl.t-ac{font-size:20px;font-weight:900;color:#C89850;line-height:1.5;letter-spacing:-.02em;margin-bottom:8px;}
+.cl-gap{height:28px;position:relative;z-index:1;}
+
+/* 하단 작은 텍스트 + CTA */
+.s1-foot{
+  position:relative;z-index:1;
+  margin-top:36px;
+  padding-top:22px;
+  border-top:1px solid rgba(255,255,255,.14);
+  animation:fadeUp .5s cubic-bezier(.22,1,.36,1) 3.0s both;
+}
+.s1-foot-row{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin-bottom:14px;
+}
+.s1-foot-row:last-of-type{margin-bottom:0;}
+.s1-foot-icon{font-size:14px;flex-shrink:0;margin-top:2px;opacity:.8;}
+.s1-foot-txt{font-size:12px;color:rgba(250,244,232,.65);line-height:1.6;}
+.s1-foot-txt strong{color:rgba(250,244,232,.9);font-weight:700;}
+
+/* 스크롤 래퍼 */
+.s1-scroll{flex:1;overflow-y:auto;padding:36px 24px 100px;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;}
+.s1-scroll::-webkit-scrollbar{display:none;}
+.s1-copy-block{display:flex;flex-direction:column;}
+
+/* 바텀 */
+.s1-bottom{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:12px 16px calc(14px + env(safe-area-inset-bottom));
+  z-index:2;
+  animation:fadeUp .45s cubic-bezier(.22,1,.36,1) 3.2s both;
+}
+.next-btn{
+  width:100%;padding:16px;
+  background:rgba(250,244,232,.14);
+  color:#FAF4E8;
+  border:1.5px solid rgba(250,244,232,.35);
+  border-radius:var(--r);
+  font-family:inherit;font-size:15px;font-weight:800;letter-spacing:-.01em;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:background .18s,transform .12s,border-color .18s;
+}
+.next-btn:active{transform:scale(.98);background:rgba(250,244,232,.22);}
+.next-btn:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* foot tap 아이템 */
+.foot-tap{
+  cursor:pointer;
+  border-radius:var(--r-sm);
+  padding:10px 12px;
+  margin:0 -12px;
+  border:1px solid transparent;
+  transition:background .2s, border-color .2s, opacity .2s;
+  -webkit-user-select:none;
+  user-select:none;
+}
+.foot-tap:active{ background:rgba(255,255,255,.06); }
+.foot-tap.tapped{
+  background:rgba(255,255,255,.07);
+  border-color:rgba(250,244,232,.2);
+}
+.foot-tap.tapped .s1-foot-txt{ color:rgba(250,244,232,.88); }
+.foot-tap.tapped .s1-foot-txt strong{ color:#FAF4E8; }
+
+.foot-tap-chk{
+  width:18px; height:18px;
+  border-radius:5px;
+  border:1.5px solid rgba(250,244,232,.25);
+  background:transparent;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  margin-top:1px;
+  transition:background .18s, border-color .18s;
+}
+.foot-tap-chk svg{ opacity:0; transition:opacity .18s; }
+.foot-tap.tapped .foot-tap-chk{
+  background:var(--a3);
+  border-color:var(--a3);
+}
+.foot-tap.tapped .foot-tap-chk svg{ opacity:1; }
+
+.foot-hint{
+  text-align:center;
+  font-size:11px;
+  color:rgba(250,244,232,.35);
+  margin-top:14px;
+  letter-spacing:.02em;
+  transition:opacity .3s;
+}
+.foot-hint.done{ opacity:0; }
+
+/* ════════════════════════════════
+   SCREEN 2 — 체크리스트
+════════════════════════════════ */
+#s2{background:var(--base);}
+
+.s2-hdr{background:var(--n2);padding:16px 20px 18px;flex-shrink:0;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;}
+.s2-hdr::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px;pointer-events:none;}
+.s2-back{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s;position:relative;z-index:1;}
+.s2-back:active{background:rgba(255,255,255,.2);}
+.s2-hdr-text{flex:1;position:relative;z-index:1;}
+.s2-hdr-title{font-size:15px;font-weight:800;color:#FAF4E8;letter-spacing:-.01em;}
+.s2-hdr-sub{font-size:11.5px;color:rgba(253,248,240,.5);margin-top:2px;}
+
+.prog-wrap{background:var(--base);padding:12px 20px 0;flex-shrink:0;}
+.prog-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.prog-label{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.04em;}
+.prog-count{font-size:11px;font-weight:800;color:var(--n3);}
+.prog-track{height:4px;background:var(--sunken);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--a3),var(--n3));border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+
+.scroll{flex:1;overflow-y:auto;padding:16px 16px 110px;-webkit-overflow-scrolling:touch;}
+.scroll::-webkit-scrollbar{display:none;}
+
+.sec-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin:22px 0 11px;}
+.sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--br-m),transparent);}
+.sec-label:first-child{margin-top:0;}
+
+.notice{background:var(--n-pale);border:1px solid var(--br-n);border-left:3px solid var(--n3);border-radius:var(--r-sm);padding:12px 14px;font-size:13px;color:var(--n2);line-height:1.7;margin-bottom:18px;}
+.notice strong{font-weight:700;}
+
+.cards{display:flex;flex-direction:column;gap:9px;}
+.card{background:var(--base);border:1.5px solid var(--br);border-radius:var(--r);overflow:hidden;transition:border-color .22s,box-shadow .22s;box-shadow:var(--sh-card);opacity:0;transform:translateY(12px);animation:cardIn .4s cubic-bezier(.22,1,.36,1) forwards;}
+@keyframes cardIn{to{opacity:1;transform:translateY(0);}}
+.card:nth-child(1){animation-delay:.04s;}.card:nth-child(2){animation-delay:.08s;}.card:nth-child(3){animation-delay:.12s;}.card:nth-child(4){animation-delay:.16s;}.card:nth-child(5){animation-delay:.20s;}.card:nth-child(6){animation-delay:.24s;}.card:nth-child(7){animation-delay:.28s;}
+.card.on{border-color:var(--n3);box-shadow:0 0 0 3px rgba(46,69,112,.09),var(--sh-card);}
+.card.hl{border-color:var(--a3);background:linear-gradient(160deg,var(--base) 60%,#FDF6E8 100%);}
+.card.hl.on{border-color:var(--a2);box-shadow:0 0 0 3px rgba(122,85,32,.1),var(--sh-card);}
+
+.trigger{display:flex;align-items:flex-start;gap:12px;padding:14px 13px;cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .15s;}
+.trigger:active{background:var(--raised);}
+
+.chkbox{width:23px;height:23px;border-radius:7px;border:1.5px solid var(--a-mid);background:var(--raised);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:background .2s,border-color .2s,transform .15s;}
+.card.on .chkbox{background:var(--n2);border-color:var(--n2);transform:scale(1.05);}
+.card.hl.on .chkbox{background:var(--a2);border-color:var(--a2);}
+.chkbox svg{opacity:0;transform:scale(.5) rotate(-15deg);transition:opacity .18s,transform .22s cubic-bezier(.34,1.56,.64,1);}
+.card.on .chkbox svg{opacity:1;transform:scale(1) rotate(0deg);}
+
+.card-icon{font-size:17px;line-height:1;flex-shrink:0;margin-top:2px;filter:grayscale(.3);transition:filter .2s;}
+.card.on .card-icon{filter:grayscale(0);}
+.card-body{flex:1;min-width:0;}
+.hl-badge{display:inline-flex;align-items:center;gap:4px;background:var(--a2);color:#FAF4E8;border-radius:var(--r-xs);padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:.04em;margin-bottom:5px;}
+.card-title{font-size:14.5px;font-weight:800;color:var(--t1);line-height:1.45;letter-spacing:-.01em;}
+.card-micro{margin-top:5px;font-size:12px;font-weight:600;color:var(--a2);line-height:1.45;}
+.chevron{width:20px;height:20px;border-radius:50%;background:var(--raised);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:background .2s,transform .28s cubic-bezier(.4,0,.2,1);}
+.card.on .chevron{transform:rotate(180deg);background:var(--sunken);}
+
+.detail{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
+.card.on .detail{max-height:1600px;}
+.det-inner{border-top:1px solid var(--br);background:var(--n-pale);padding:14px 13px 16px;display:flex;flex-direction:column;gap:13px;}
+.card.hl .det-inner{background:#FEF9EE;border-top-color:rgba(192,152,80,.2);}
+.det-row{display:flex;flex-direction:column;gap:8px;}
+.det-lbl{font-size:12px;font-weight:800;color:var(--n2);letter-spacing:.02em;}
+
+.guide-box{background:var(--base);border:1px solid var(--br-m);border-radius:var(--r-sm);padding:12px 14px;}
+.guide-box ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;}
+.guide-box li{font-size:12.5px;color:var(--t3);line-height:1.55;padding-left:15px;position:relative;}
+.guide-box li::before{content:'•';position:absolute;left:0;color:var(--a-mid);font-size:11px;line-height:1.7;}
+.guide-box li strong{color:var(--t2);font-weight:700;}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{padding:7px 12px;border-radius:22px;border:1.5px solid var(--br-m);background:var(--base);font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .15s,border-color .15s,color .15s,transform .1s;}
+.chip:active{transform:scale(.93);}
+.chip.on{background:var(--n2);border-color:var(--n2);color:#FAF4E8;}
+
+.rbts{display:flex;flex-wrap:wrap;gap:6px;}
+.rbt{padding:7px 12px;border-radius:22px;border:1.5px solid var(--br-m);background:var(--base);font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .15s,border-color .15s,color .15s,transform .1s;}
+.rbt:active{transform:scale(.93);}
+.rbt.on{background:var(--n2);border-color:var(--n2);color:#FAF4E8;}
+
+input[type=text],input[type=tel],select,textarea{width:100%;padding:11px 13px;font-family:inherit;font-size:16px;color:var(--t1);background:var(--base);border:1.5px solid var(--br-m);border-radius:var(--r-sm);outline:none;transition:border-color .18s,box-shadow .18s;-webkit-appearance:none;appearance:none;line-height:1.5;}
+input:focus,select:focus,textarea:focus{border-color:var(--n3);box-shadow:0 0 0 3px rgba(46,69,112,.09);}
+input::placeholder,textarea::placeholder{color:var(--t4);font-size:15px;}
+textarea{resize:none;line-height:1.7;min-height:88px;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238C7460' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:36px;cursor:pointer;}
+
+.contact-box{background:var(--raised);border:1.5px solid var(--br-m);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:13px;box-shadow:var(--sh-card);}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field-lbl{font-size:12.5px;font-weight:800;color:var(--t2);letter-spacing:.02em;}
+.req{color:var(--err);margin-left:2px;}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--br-m),transparent);margin:2px 0;}
+
+.s2-bottom{position:absolute;bottom:0;left:0;right:0;padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--br);z-index:50;}
+.sub-btn{width:100%;padding:16px;background:var(--n2);color:#FAF4E8;border:none;border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:800;letter-spacing:-.01em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .18s,transform .12s;position:relative;overflow:hidden;}
+.sub-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 50%);pointer-events:none;}
+.sub-btn:active{transform:scale(.98);background:var(--n3);}
+.sub-btn:disabled{background:var(--sunken);color:var(--t4);cursor:not-allowed;transform:none;}
+
+/* ════════════════════════════════
+   SCREEN 3 — 성공
+════════════════════════════════ */
+#s3{background:var(--base);overflow-y:auto;justify-content:center;align-items:center;text-align:center;padding:32px 24px calc(28px + env(safe-area-inset-bottom));}
+
+.suc-ring{width:68px;height:68px;border-radius:50%;background:var(--ok-bg);border:2px solid var(--ok);display:flex;align-items:center;justify-content:center;margin-bottom:16px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);flex-shrink:0;}
+@keyframes popIn{from{transform:scale(.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+.suc-title{font-size:21px;font-weight:900;color:var(--t1);letter-spacing:-.02em;margin-bottom:8px;}
+.suc-sub{font-size:13.5px;color:var(--t2);line-height:1.75;margin-bottom:20px;}
+.suc-sub strong{color:var(--n2);font-weight:800;}
+.kakao-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:14px;background:#FEE500;color:#18110A;border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;text-decoration:none;transition:filter .15s,transform .12s;margin-bottom:0;letter-spacing:-.01em;}
+.kakao-btn:active{filter:brightness(.94);transform:scale(.99);}
+.kakao-ico{width:22px;height:22px;background:#3A1C1C;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.trust-grid{display:flex;align-items:center;justify-content:center;margin-top:20px;padding-top:18px;border-top:1px solid var(--br);width:100%;}
+.trust-item{flex:1;text-align:center;padding:0 6px;}
+.trust-item:not(:last-child){border-right:1px solid var(--br);}
+.trust-num{font-size:17px;font-weight:900;color:var(--n2);letter-spacing:-.02em;line-height:1;margin-bottom:4px;}
+.trust-desc{font-size:10.5px;color:var(--t3);font-weight:600;line-height:1.4;}
+
+/* TOAST */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--err);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;white-space:nowrap;z-index:999;transition:opacity .22s,transform .22s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 16px rgba(156,42,42,.3);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.spin{width:19px;height:19px;border:2.5px solid rgba(250,244,232,.3);border-top-color:#FAF4E8;border-radius:50%;animation:rotate .7s linear infinite;}
+@keyframes rotate{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ══════════════════════════════
+       SCREEN 1 — 랜딩
+  ══════════════════════════════ -->
+  <div class="screen active" id="s1">
+
+    <div class="s1-scroll">
+
+      <!-- 부제목 + 카피 블록 -->
+      <div class="s1-copy-block">
+        <div class="s1-eyebrow">엘리트손해사정법인 손해사정사 직접 검토</div>
+        <div class="cl t-sm" style="animation-delay:.28s">잘 하신 겁니다. 정말로요.</div>
+        <div class="cl-gap"></div>
+        <div class="cl t-md" style="animation-delay:.72s">보험사를 믿으셨죠.</div>
+        <div class="cl t-md" style="animation-delay:1.00s">의사를 믿으셨겠구요.</div>
+        <div class="cl t-md" style="animation-delay:1.28s">손해사정사도 믿으셨을겁니다.</div>
+        <div class="cl-gap"></div>
+        <div class="cl t-lg" style="animation-delay:1.72s">잘하셨어요.</div>
+        <div class="cl t-lg" style="animation-delay:2.00s">고객님은 아무 잘못 없으십니다.</div>
+        <div class="cl-gap"></div>
+        <div class="cl t-ac" style="animation-delay:2.50s">이번에는 저희를 믿어주세요.</div>
+        <div class="cl t-ac" style="animation-delay:2.80s">결과로 보답하겠습니다.</div>
+      </div>
+
+    </div><!-- /s1-scroll -->
+
+    <div class="s1-bottom">
+      <button class="next-btn" id="nextBtn" onclick="goTo('s1','s2')">
+        <span>내 보험금 확인하기</span>
+        <span style="font-size:16px">→</span>
+      </button>
+    </div>
+
+  </div><!-- /s1 -->
+
+  <!-- ══════════════════════════════
+       SCREEN 2 — 체크리스트
+  ══════════════════════════════ -->
+  <div class="screen right" id="s2">
+
+    <div class="s2-hdr">
+      <div class="s2-back" onclick="goTo('s2','s1')">
+        <svg width="8" height="13" viewBox="0 0 8 13" fill="none">
+          <path d="M7 1L1 6.5L7 12" stroke="rgba(250,244,232,.7)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="s2-hdr-text">
+        <div class="s2-hdr-title">내 보험금 찾기</div>
+        <div class="s2-hdr-sub">해당 항목을 선택해주세요</div>
+      </div>
+    </div>
+
+    <div class="prog-wrap">
+      <div class="prog-meta">
+        <span class="prog-label">CHECKLIST</span>
+        <span class="prog-count" id="progCount">0 / 7</span>
+      </div>
+      <div class="prog-track">
+        <div class="prog-fill" id="progFill"></div>
+      </div>
+    </div>
+
+    <div class="scroll" id="formScroll">
+
+      <div class="notice">
+        <strong>해당 사항이 많을수록 좋습니다.</strong><br>
+        이미 보상을 받으셨어도 <strong>재조사로 추가 수령</strong>이 가능한 경우가 많습니다.
+      </div>
+
+      <div class="sec-label">경험 체크</div>
+      <div class="cards">
+
+        <!-- 1. 타 손사 -->
+        <div class="card hl" data-id="1">
+          <div class="trigger" onclick="toggleCard(this)">
+            <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="card-icon">⭐</div>
+            <div class="card-body">
+              <div class="hl-badge">★ 실력으로 증명</div>
+              <div class="card-title">타 손해사정사 종결·포기 건<br>재검토 및 추가수령 경험 多</div>
+            </div>
+            <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#8C7460" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="detail"><div class="det-inner">
+            <div class="det-row">
+              <span class="det-lbl">상황을 적어주세요</span>
+              <div class="guide-box"><ul>
+                <li>종결 또는 포기 경위</li>
+                <li>당시 수령 금액 <strong>(대략)</strong></li>
+                <li>이후 증상 변화</li>
+              </ul></div>
+              <textarea data-key="prev_adj" rows="4" placeholder="위 항목을 참고해서 자유롭게 적어주세요"></textarea>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- 2. 특수 직군 -->
+        <div class="card" data-id="2">
+          <div class="trigger" onclick="toggleCard(this)">
+            <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="card-icon">🪪</div>
+            <div class="card-body">
+              <div class="card-title">특수 직군 해당</div>
+              <div class="card-micro">단체보험·근재보험 미청구 누락 多</div>
+            </div>
+            <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#8C7460" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="detail"><div class="det-inner">
+            <div class="det-row">
+              <span class="det-lbl">해당 직군 (복수 선택 가능)</span>
+              <div class="chips" data-name="job_type">
+                <div class="chip" onclick="toggleChip(this,'job_type')">경찰</div>
+                <div class="chip" onclick="toggleChip(this,'job_type')">군인</div>
+                <div class="chip" onclick="toggleChip(this,'job_type')">교직원</div>
+                <div class="chip" onclick="toggleChip(this,'job_type')">소방관</div>
+                <div class="chip" onclick="toggleChip(this,'job_type')">공무원</div>
+                <div class="chip" onclick="toggleChip(this,'job_type')">선원/어선원</div>
+                <div class="chip" onclick="toggleChip(this,'job_type')">기타</div>
+              </div>
+            </div>
+            <div class="det-row">
+              <span class="det-lbl">상황을 적어주세요</span>
+              <div class="guide-box"><ul>
+                <li>다친 경위</li>
+                <li>업무 관련 여부</li>
+                <li>보험 청구 이력</li>
+                <li>청구 후 처리결과</li>
+              </ul></div>
+              <textarea data-key="job_detail" rows="4" placeholder="위 항목을 참고해서 자유롭게 적어주세요"></textarea>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- 3. 사고 -->
+        <div class="card" data-id="3">
+          <div class="trigger" onclick="toggleCard(this)">
+            <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="card-icon">🚗</div>
+            <div class="card-body">
+              <div class="card-title">사고 경험</div>
+              <div class="card-micro">과소지급 사례 흔함</div>
+            </div>
+            <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#8C7460" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="detail"><div class="det-inner">
+            <div class="det-row">
+              <span class="det-lbl">사고 유형 (복수 선택 가능)</span>
+              <div class="chips" data-name="acc_type">
+                <div class="chip" onclick="toggleChip(this,'acc_type')">교통사고 (100% 내과실, 뺑소니 등 포함)</div>
+                <div class="chip" onclick="toggleChip(this,'acc_type')">업무·산재</div>
+                <div class="chip" onclick="toggleChip(this,'acc_type')">출퇴근·출장</div>
+                <div class="chip" onclick="toggleChip(this,'acc_type')">시설·공공장소</div>
+                <div class="chip" onclick="toggleChip(this,'acc_type')">일상 중</div>
+                <div class="chip" onclick="toggleChip(this,'acc_type')">기타</div>
+              </div>
+            </div>
+            <div class="det-row">
+              <span class="det-lbl">상황을 적어주세요</span>
+              <div class="guide-box"><ul>
+                <li>사고 날짜</li>
+                <li>사고 경위 <strong>(상세하게)</strong></li>
+                <li>부위 / 진단명</li>
+                <li>입원 여부 및 기간</li>
+                <li>병원명</li>
+                <li>당시 개인보험 가입 여부</li>
+                <li>당시 단체보험 가입 여부</li>
+                <li>119 이송 여부</li>
+                <li>교통사고인 경우 — 과실비율, 처리 보험사명, 담당자 연락처</li>
+                <li>배상보험 접수 여부 <strong>(사업장·공공시설·도로 하자 포함)</strong></li>
+                <li>접수 후 처리결과</li>
+                <li>공상처리 여부 <strong>(산재 접수 없이 사업주와 개인 합의한 경우)</strong></li>
+                <li>공상처리결과</li>
+                <li>MRI 후 주치의 이상없다는 소견 여부</li>
+              </ul></div>
+              <textarea data-key="acc_detail" rows="5" placeholder="위 항목을 참고해서 자유롭게 적어주세요"></textarea>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- 4. 질병 -->
+        <div class="card" data-id="4">
+          <div class="trigger" onclick="toggleCard(this)">
+            <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="card-icon">🏥</div>
+            <div class="card-body">
+              <div class="card-title">질병 진단 경험</div>
+              <div class="card-micro">보험사 분류 오류로 과소지급 사례 흔함</div>
+            </div>
+            <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#8C7460" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="detail"><div class="det-inner">
+            <div class="det-row">
+              <span class="det-lbl">해당 질병 (복수 선택 가능)</span>
+              <div class="chips" data-name="dis_type">
+                <div class="chip" onclick="toggleChip(this,'dis_type')">암</div>
+                <div class="chip" onclick="toggleChip(this,'dis_type')">치매</div>
+                <div class="chip" onclick="toggleChip(this,'dis_type')">기타</div>
+              </div>
+            </div>
+            <div class="det-row">
+              <span class="det-lbl">상황을 적어주세요</span>
+              <div class="guide-box"><ul>
+                <li>진단명</li>
+                <li>진단 시점</li>
+                <li>치료 내용</li>
+                <li>당시 단체보험 가입 여부</li>
+                <li>보험 청구 여부 및 이력</li>
+              </ul></div>
+              <textarea data-key="dis_detail" rows="4" placeholder="위 항목을 참고해서 자유롭게 적어주세요"></textarea>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- 5. 선천성 장애 -->
+        <div class="card" data-id="5">
+          <div class="trigger" onclick="toggleCard(this)">
+            <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="card-icon">🩺</div>
+            <div class="card-body">
+              <div class="card-title">선천성 장애</div>
+              <div class="card-micro">초기 청구부터 어렵고 등급 변경 후 미청구 多</div>
+            </div>
+            <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#8C7460" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="detail"><div class="det-inner">
+            <div class="det-row">
+              <span class="det-lbl">상황을 적어주세요</span>
+              <div class="guide-box"><ul>
+                <li>장애 유형</li>
+                <li>진단 시점</li>
+                <li>보험 청구 여부</li>
+                <li>청구 후 처리결과</li>
+                <li>장애 등급 변경 이력</li>
+              </ul></div>
+              <textarea data-key="dis_congenital" rows="4" placeholder="위 항목을 참고해서 자유롭게 적어주세요"></textarea>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- 6. 사망 -->
+        <div class="card" data-id="6">
+          <div class="trigger" onclick="toggleCard(this)">
+            <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="card-icon">🕯️</div>
+            <div class="card-body">
+              <div class="card-title">사망 사건</div>
+              <div class="card-micro">질병사망·상해사망 분류에 따라 보험금 차이 큼</div>
+            </div>
+            <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#8C7460" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="detail"><div class="det-inner">
+            <div class="det-row">
+              <span class="det-lbl">상황을 적어주세요</span>
+              <div class="guide-box"><ul>
+                <li>고인과의 관계</li>
+                <li>사망 원인 및 경위</li>
+                <li>보험 가입 여부</li>
+                <li>보험금 청구 여부</li>
+                <li>청구 후 처리결과</li>
+              </ul></div>
+              <textarea data-key="death_detail" rows="4" placeholder="위 항목을 참고해서 자유롭게 적어주세요"></textarea>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- 7. 주변인 -->
+        <div class="card" data-id="7">
+          <div class="trigger" onclick="toggleCard(this)">
+            <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="card-icon">👥</div>
+            <div class="card-body">
+              <div class="card-title">주변인 관련</div>
+              <div class="card-micro">당사자가 아닌 가족·지인 상황도 접수 가능</div>
+            </div>
+            <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#8C7460" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="detail"><div class="det-inner">
+            <div class="det-row">
+              <span class="det-lbl">상황을 적어주세요</span>
+              <div class="guide-box"><ul>
+                <li>해당인과의 관계</li>
+                <li>위 항목 중 해당되는 상황 (사고·질병·장애·사망 등)</li>
+                <li>보험 청구 여부 및 처리결과</li>
+              </ul></div>
+              <textarea data-key="around_detail" rows="4" placeholder="주변에 위 항목들에 해당하는 분이 계시면 자유롭게 적어주세요"></textarea>
+            </div>
+          </div></div>
+        </div>
+
+      </div><!-- /cards -->
+
+      <div class="sec-label" style="margin-top:24px">위 항목 외 기타 상황</div>
+      <textarea id="extraMemo" rows="5" placeholder="보험 보상·손해배상과 관련해 피해를 입었거나, 반대로 가해자가 되어 보상·배상을 해준 경우도 모두 포함해서 자유롭게 적어주세요.&#10;(가해자인 경우에도 보험 처리가 가능한 경우가 있습니다)"></textarea>
+
+      <div class="sec-label" style="margin-top:24px">연락처</div>
+      <div class="contact-box">
+        <div class="field">
+          <span class="field-lbl">이름<span class="req">*</span></span>
+          <input type="text" id="uName" placeholder="홍길동" autocomplete="name">
+        </div>
+        <div class="divider"></div>
+        <div class="field">
+          <span class="field-lbl">연락처<span class="req">*</span></span>
+          <input type="tel" id="uPhone" placeholder="010-0000-0000" maxlength="13" autocomplete="tel">
+        </div>
+        <div class="divider"></div>
+        <div class="field">
+          <span class="field-lbl">연락 방법<span class="req">*</span></span>
+          <div class="rbts">
+            <div class="rbt" onclick="toggleRadio(this,'contact_method')">📞 전화</div>
+            <div class="rbt" onclick="toggleRadio(this,'contact_method')">💬 카카오톡</div>
+          </div>
+        </div>
+      </div>
+      <div style="height:10px"></div>
+
+    </div><!-- /scroll -->
+
+    <div class="s2-bottom">
+      <button class="sub-btn" id="subBtn" onclick="handleSubmit()">
+        <span style="font-size:17px">🔍</span>
+        <span id="btnTxt">무료 검토 신청하기</span>
+      </button>
+    </div>
+
+  </div><!-- /s2 -->
+
+  <!-- ══════════════════════════════
+       SCREEN 3 — 성공
+  ══════════════════════════════ -->
+  <div class="screen right" id="s3">
+    <div class="suc-ring">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <path d="M7 16l6 6L25 10" stroke="#2E6644" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="suc-title">접수 완료!</div>
+    <div class="suc-sub">
+      담당자가 내용을 검토하고<br>
+      <strong>영업일 기준 1~2일 내</strong>로 연락드립니다.
+    </div>
+
+    <!-- AI툴 + 제보 + 전달 — 중앙 카드 -->
+    <div style="width:100%;background:var(--raised);border:1.5px solid var(--br-m);border-radius:var(--r);padding:16px 15px;display:flex;flex-direction:column;gap:11px;margin-bottom:18px;text-align:left;">
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-size:15px;flex-shrink:0;margin-top:2px;">🤖</span>
+        <span style="font-size:12.5px;color:var(--t2);line-height:1.65;">저희는 세상의 모든 분쟁, 보험금을 찾는 것을 목표로 AI deep search tool로 사건 유형을 매일 파헤치고 업데이트하고 있습니다.</span>
+      </div>
+      <div style="height:1px;background:var(--br);"></div>
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-size:15px;flex-shrink:0;margin-top:2px;">💰</span>
+        <span style="font-size:12.5px;color:var(--t2);line-height:1.65;">저희가 아직 발굴하지 못한 유형을 제보해주시면 <strong style="color:var(--t1);">최소 100만원~수천만원</strong>의 보상을 드립니다. 많이 제보해주세요!</span>
+      </div>
+      <div style="height:1px;background:var(--br);"></div>
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-size:15px;flex-shrink:0;margin-top:2px;">🤝</span>
+        <span style="font-size:12.5px;color:var(--t2);line-height:1.65;">당사자가 아니어도 됩니다. 주변에 해당하는 분이 계시면 많이 전달해주세요. 밤을 새서라도 다 찾아내겠습니다.</span>
+      </div>
+    </div>
+
+    <!-- 신뢰지표 -->
+    <div class="trust-grid">
+      <div class="trust-item"><div class="trust-num">10년+</div><div class="trust-desc">손해사정<br>경력</div></div>
+      <div class="trust-item"><div class="trust-num">1,000건+</div><div class="trust-desc">처리<br>실적</div></div>
+      <div class="trust-item"><div class="trust-num">98%</div><div class="trust-desc">처리사건<br>부책률</div></div>
+    </div>
+
+    <!-- 카카오 -->
+    <a href="http://pf.kakao.com/_XxjhEX" target="_blank" class="kakao-btn" style="margin-top:18px;">
+      <div class="kakao-ico">💬</div>카카오톡으로 바로 문의하기
+    </a>
+  </div>
+
+</div><!-- /shell -->
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzOjLkQT_U5sgGMyBX0OEfvcQnuBgC9otWwOPR7Z5JI21GNKkYFiDaCy7V1ddT0F1ww/exec';
+const TOTAL = 7;
+const S = { checked: new Set(), chips: {}, radios: {} };
+
+/* URL 파라미터에서 담당자 이메일 읽기 — 없으면 기본값 */
+const STAFF_EMAIL = new URLSearchParams(window.location.search).get('to') || 'daeriseo@gmail.com';
+
+/* foot 탭 잠금 */
+function tapFoot(el) {
+  el.classList.add('tapped');
+  el.onclick = null; // 한 번 탭하면 재탭 불가
+  const all  = document.querySelectorAll('.foot-tap');
+  const done = [...all].every(r => r.classList.contains('tapped'));
+  if (done) {
+    const btn  = document.getElementById('nextBtn');
+    const hint = document.getElementById('footHint');
+    hint.classList.add('done');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+}
+
+/* 화면 전환 */
+function goTo(from, to) {
+  const fromEl = document.getElementById(from);
+  const toEl   = document.getElementById(to);
+  const order  = ['s1','s2','s3'];
+  const forward = order.indexOf(to) > order.indexOf(from);
+  toEl.classList.remove('active','left','right');
+  toEl.classList.add(forward ? 'right' : 'left');
+  toEl.getBoundingClientRect();
+  fromEl.classList.remove('active');
+  fromEl.classList.add(forward ? 'left' : 'right');
+  toEl.classList.remove('left','right');
+  toEl.classList.add('active');
+  if (to === 's2') document.getElementById('formScroll').scrollTop = 0;
+}
+
+/* 카드 토글 */
+function toggleCard(trigger) {
+  const card = trigger.closest('.card');
+  const isOn = card.classList.toggle('on');
+  S.checked[isOn ? 'add' : 'delete'](card.dataset.id);
+  updateProgress();
+}
+
+/* 칩 복수 */
+function toggleChip(el, name) {
+  el.classList.toggle('on');
+  S.chips[name] = [...el.closest('.chips').querySelectorAll('.chip.on')]
+    .map(c => c.textContent.trim()).join(', ');
+}
+
+/* 라디오 단수 */
+function toggleRadio(el, name) {
+  el.closest('.rbts').querySelectorAll('.rbt').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  S.radios[name] = el.textContent.trim();
+}
+
+/* 프로그레스 */
+function updateProgress() {
+  const n = S.checked.size;
+  document.getElementById('progFill').style.width  = (n / TOTAL * 100) + '%';
+  document.getElementById('progCount').textContent = n + ' / ' + TOTAL;
+}
+
+/* 전화번호 포맷 */
+document.getElementById('uPhone').addEventListener('input', function () {
+  const v = this.value.replace(/\D/g,'');
+  if      (v.length <= 3) this.value = v;
+  else if (v.length <= 7) this.value = v.slice(0,3)+'-'+v.slice(3);
+  else                    this.value = v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);
+});
+
+/* 토스트 */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* 유효성 */
+function validate() {
+  const phone = document.getElementById('uPhone').value.replace(/\D/g,'');
+  if (S.checked.size === 0)  { showToast('해당 항목을 1개 이상 선택해주세요'); return false; }
+  if (!document.getElementById('uName').value.trim()) { showToast('이름을 입력해주세요'); return false; }
+  if (phone.length < 10)     { showToast('연락처를 확인해주세요'); return false; }
+  if (!S.radios['contact_method']) { showToast('연락 방법을 선택해주세요'); return false; }
+  return true;
+}
+
+/* 페이로드 */
+function buildPayload() {
+  const texts = {};
+  document.querySelectorAll('[data-key]').forEach(el => {
+    if (el.value.trim()) texts[el.dataset.key] = el.value.trim();
+  });
+  const labels = [];
+  S.checked.forEach(id => {
+    const c = document.querySelector(`.card[data-id="${id}"]`);
+    if (c) { const t = c.querySelector('.card-title'); if (t) labels.push(t.textContent.replace(/\s+/g,' ').trim()); }
+  });
+  return {
+    type          : '[보험금찾기]',
+    staff_email   : STAFF_EMAIL,
+    name          : document.getElementById('uName').value.trim(),
+    phone         : document.getElementById('uPhone').value.trim(),
+    contact_method: S.radios['contact_method'] || '',
+    checked_items : labels.join(' | '),
+    chip_data     : JSON.stringify(S.chips),
+    text_data     : JSON.stringify(texts),
+    extra_memo    : document.getElementById('extraMemo').value.trim(),
+    submitted_at  : new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul'})
+  };
+}
+
+/* 제출 */
+async function handleSubmit() {
+  if (!validate()) return;
+  const btn = document.getElementById('subBtn');
+  btn.disabled = true;
+  document.getElementById('btnTxt').textContent = '';
+  btn.insertAdjacentHTML('beforeend','<div class="spin"></div>');
+  try {
+    await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildPayload())});
+  } catch(e) {}
+  goTo('s2','s3');
+}
+</script>
+</body>
+</html>
