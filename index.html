@@ -167,6 +167,9 @@ body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;backgr
 .foot-tap.tapped .foot-tap-chk svg{ opacity:1; }
 
 .balloon{
+  position:absolute;
+  bottom:80px;
+  left:16px;right:16px;
   background:#FAF4E8;
   color:var(--n2);
   border:1px solid rgba(250,244,232,.3);
@@ -175,8 +178,7 @@ body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;backgr
   font-size:12px;
   font-weight:600;
   line-height:1.65;
-  margin-bottom:10px;
-  position:relative;
+  z-index:10;
   opacity:0;
   transform:translateY(6px);
   transition:opacity .25s, transform .25s cubic-bezier(.22,1,.36,1);
@@ -353,10 +355,11 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
     </div><!-- /s1-scroll -->
 
+    <div class="balloon" id="balloon">
+      💡 생·손보협회 휴면보험금 찾기 서비스와는 무관한 별도 서비스입니다.<br>아직 조회 안 해보셨다면 나중에 한 번 해보세요!
+    </div>
+
     <div class="s1-bottom">
-      <div class="balloon" id="balloon">
-        💡 생·손보협회 휴면보험금 찾기 서비스와는 무관한 별도 서비스입니다.<br>아직 조회 안 해보셨다면 나중에 한 번 해보세요!
-      </div>
       <button class="next-btn" id="nextBtn" onclick="handleNext()">
         <span>내 보험금 확인하기</span>
         <span style="font-size:16px">→</span>
