@@ -66,6 +66,7 @@ body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;backgr
   position:relative;z-index:1;
   font-size:12.5px;font-weight:700;color:#D4AC70;
   letter-spacing:.05em;text-transform:uppercase;margin-bottom:22px;
+  animation:fadeUp .5s cubic-bezier(.22,1,.36,1) .15s both;
 }
 
 /* 카피 라인들 */
@@ -165,43 +166,7 @@ body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;backgr
 }
 .foot-tap.tapped .foot-tap-chk svg{ opacity:1; }
 
-/* 모달 */
-.modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(10,8,4,.72);
-  backdrop-filter:blur(4px);
-  -webkit-backdrop-filter:blur(4px);
-  z-index:999;
-  display:flex;align-items:center;justify-content:center;
-  padding:24px;
-  opacity:0;pointer-events:none;
-  transition:opacity .25s;
-}
-.modal-overlay.show{opacity:1;pointer-events:all;}
-.modal-box{
-  background:var(--base);
-  border-radius:20px;
-  padding:28px 24px 24px;
-  width:100%;max-width:340px;
-  display:flex;flex-direction:column;align-items:center;text-align:center;
-  box-shadow:0 20px 60px rgba(0,0,0,.35);
-  transform:translateY(16px) scale(.97);
-  transition:transform .3s cubic-bezier(.22,1,.36,1);
-}
-.modal-overlay.show .modal-box{transform:translateY(0) scale(1);}
-.modal-icon{font-size:32px;margin-bottom:12px;}
-.modal-title{font-size:16px;font-weight:900;color:var(--t1);letter-spacing:-.02em;margin-bottom:14px;}
-.modal-body{font-size:13.5px;color:var(--t2);line-height:1.8;margin-bottom:22px;}
-.modal-body strong{color:var(--n2);font-weight:800;}
-.modal-btn{
-  width:100%;padding:15px;
-  background:var(--n2);color:#FAF4E8;
-  border:none;border-radius:var(--r);
-  font-family:inherit;font-size:15px;font-weight:800;
-  cursor:pointer;
-  transition:background .15s, transform .12s;
-}
-.modal-btn:active{background:var(--n3);transform:scale(.98);}
+.foot-hint{
   text-align:center;
   font-size:11px;
   color:rgba(250,244,232,.35);
@@ -221,8 +186,8 @@ body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;backgr
 .s2-back{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s;position:relative;z-index:1;}
 .s2-back:active{background:rgba(255,255,255,.2);}
 .s2-hdr-text{flex:1;position:relative;z-index:1;}
-.s2-hdr-title{font-size:15px;font-weight:800;color:#FAF4E8;letter-spacing:-.01em;}
-.s2-hdr-sub{font-size:11.5px;color:rgba(253,248,240,.5);margin-top:2px;}
+.s2-hdr-title{font-size:16px;font-weight:800;color:#FAF4E8;letter-spacing:-.01em;}
+.s2-hdr-sub{font-size:12.5px;color:rgba(253,248,240,.5);margin-top:2px;}
 
 .prog-wrap{background:var(--base);padding:12px 20px 0;flex-shrink:0;}
 .prog-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
@@ -234,12 +199,12 @@ body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;backgr
 .scroll{flex:1;overflow-y:auto;padding:16px 16px 110px;-webkit-overflow-scrolling:touch;}
 .scroll::-webkit-scrollbar{display:none;}
 
-.sec-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin:22px 0 11px;}
+.sec-label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin:22px 0 11px;}
 .sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--br-m),transparent);}
 .sec-label:first-child{margin-top:0;}
 
-.notice{background:var(--n-pale);border:1px solid var(--br-n);border-left:3px solid var(--n3);border-radius:var(--r-sm);padding:12px 14px;font-size:13px;color:var(--n2);line-height:1.7;margin-bottom:18px;}
-.notice strong{font-weight:700;}
+.notice{background:var(--n-pale);border:1px solid var(--br-n);border-left:3px solid var(--n3);border-radius:var(--r-sm);padding:14px 16px;font-size:15.5px;color:var(--n2);line-height:1.78;font-weight:600;margin-bottom:18px;}
+.notice strong{font-weight:800;}
 
 .cards{display:flex;flex-direction:column;gap:9px;}
 .card{background:var(--base);border:1.5px solid var(--br);border-radius:var(--r);overflow:hidden;transition:border-color .22s,box-shadow .22s;box-shadow:var(--sh-card);opacity:0;transform:translateY(12px);animation:cardIn .4s cubic-bezier(.22,1,.36,1) forwards;}
@@ -258,12 +223,12 @@ body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;backgr
 .chkbox svg{opacity:0;transform:scale(.5) rotate(-15deg);transition:opacity .18s,transform .22s cubic-bezier(.34,1.56,.64,1);}
 .card.on .chkbox svg{opacity:1;transform:scale(1) rotate(0deg);}
 
-.card-icon{font-size:17px;line-height:1;flex-shrink:0;margin-top:2px;filter:grayscale(.3);transition:filter .2s;}
+.card-icon{font-size:18px;line-height:1;flex-shrink:0;margin-top:2px;filter:grayscale(.3);transition:filter .2s;}
 .card.on .card-icon{filter:grayscale(0);}
 .card-body{flex:1;min-width:0;}
-.hl-badge{display:inline-flex;align-items:center;gap:4px;background:var(--a2);color:#FAF4E8;border-radius:var(--r-xs);padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:.04em;margin-bottom:5px;}
-.card-title{font-size:14.5px;font-weight:800;color:var(--t1);line-height:1.45;letter-spacing:-.01em;}
-.card-micro{margin-top:5px;font-size:12px;font-weight:600;color:var(--a2);line-height:1.45;}
+.hl-badge{display:inline-flex;align-items:center;gap:4px;background:var(--a2);color:#FAF4E8;border-radius:var(--r-xs);padding:3px 8px;font-size:11px;font-weight:800;letter-spacing:.04em;margin-bottom:5px;}
+.card-title{font-size:16.5px;font-weight:800;color:var(--t1);line-height:1.45;letter-spacing:-.01em;}
+.card-micro{margin-top:5px;font-size:13.5px;font-weight:600;color:var(--a2);line-height:1.45;}
 .chevron{width:20px;height:20px;border-radius:50%;background:var(--raised);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:background .2s,transform .28s cubic-bezier(.4,0,.2,1);}
 .card.on .chevron{transform:rotate(180deg);background:var(--sunken);}
 
@@ -272,21 +237,21 @@ body{font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;backgr
 .det-inner{border-top:1px solid var(--br);background:var(--n-pale);padding:14px 13px 16px;display:flex;flex-direction:column;gap:13px;}
 .card.hl .det-inner{background:#FEF9EE;border-top-color:rgba(192,152,80,.2);}
 .det-row{display:flex;flex-direction:column;gap:8px;}
-.det-lbl{font-size:12px;font-weight:800;color:var(--n2);letter-spacing:.02em;}
+.det-lbl{font-size:13.5px;font-weight:800;color:var(--n2);letter-spacing:.02em;}
 
 .guide-box{background:var(--base);border:1px solid var(--br-m);border-radius:var(--r-sm);padding:12px 14px;}
-.guide-box ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;}
-.guide-box li{font-size:12.5px;color:var(--t3);line-height:1.55;padding-left:15px;position:relative;}
+.guide-box ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:7px;}
+.guide-box li{font-size:14px;color:var(--t3);line-height:1.55;padding-left:15px;position:relative;}
 .guide-box li::before{content:'•';position:absolute;left:0;color:var(--a-mid);font-size:11px;line-height:1.7;}
 .guide-box li strong{color:var(--t2);font-weight:700;}
 
 .chips{display:flex;flex-wrap:wrap;gap:6px;}
-.chip{padding:7px 12px;border-radius:22px;border:1.5px solid var(--br-m);background:var(--base);font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .15s,border-color .15s,color .15s,transform .1s;}
+.chip{padding:7px 12px;border-radius:22px;border:1.5px solid var(--br-m);background:var(--base);font-size:13.5px;font-weight:700;color:var(--t2);cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .15s,border-color .15s,color .15s,transform .1s;}
 .chip:active{transform:scale(.93);}
 .chip.on{background:var(--n2);border-color:var(--n2);color:#FAF4E8;}
 
 .rbts{display:flex;flex-wrap:wrap;gap:6px;}
-.rbt{padding:7px 12px;border-radius:22px;border:1.5px solid var(--br-m);background:var(--base);font-size:12px;font-weight:700;color:var(--t2);cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .15s,border-color .15s,color .15s,transform .1s;}
+.rbt{padding:7px 12px;border-radius:22px;border:1.5px solid var(--br-m);background:var(--base);font-size:13.5px;font-weight:700;color:var(--t2);cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .15s,border-color .15s,color .15s,transform .1s;}
 .rbt:active{transform:scale(.93);}
 .rbt.on{background:var(--n2);border-color:var(--n2);color:#FAF4E8;}
 
@@ -298,7 +263,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 .contact-box{background:var(--raised);border:1.5px solid var(--br-m);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:13px;box-shadow:var(--sh-card);}
 .field{display:flex;flex-direction:column;gap:6px;}
-.field-lbl{font-size:12.5px;font-weight:800;color:var(--t2);letter-spacing:.02em;}
+.field-lbl{font-size:13.5px;font-weight:800;color:var(--t2);letter-spacing:.02em;}
 .req{color:var(--err);margin-left:2px;}
 .divider{height:1px;background:linear-gradient(90deg,transparent,var(--br-m),transparent);margin:2px 0;}
 
@@ -372,19 +337,6 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
   </div><!-- /s1 -->
 
-  <!-- 안내 모달 -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal-box">
-      <div class="modal-icon">💡</div>
-      <div class="modal-title">잠깐, 안내드립니다</div>
-      <div class="modal-body">
-        본 서비스는 <strong>생·손보협회에서 운영 중인<br>휴면보험금·숨은보험금 찾기 서비스와는<br>무관한 별도 서비스</strong>입니다.<br><br>
-        협회 서비스를 아직 이용 안 해보셨다면<br>나중에 한 번 조회해보시길 권장드립니다.
-      </div>
-      <button class="modal-btn" onclick="closeModal()">확인했습니다 →</button>
-    </div>
-  </div>
-
   <!-- ══════════════════════════════
        SCREEN 2 — 체크리스트
   ══════════════════════════════ -->
@@ -405,7 +357,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="prog-wrap">
       <div class="prog-meta">
         <span class="prog-label">CHECKLIST</span>
-        <span class="prog-count" id="progCount">0 / 7</span>
+        <span class="prog-count" id="progCount">0 / 5</span>
       </div>
       <div class="prog-track">
         <div class="prog-fill" id="progFill"></div>
@@ -415,8 +367,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="scroll" id="formScroll">
 
       <div class="notice">
-        <strong>해당 사항이 많을수록 좋습니다.</strong><br>
-        이미 보상을 받으셨어도 <strong>재조사로 추가 수령</strong>이 가능한 경우가 많습니다.
+        모르고 놓친 보상, 이미 받은 보상에 대해서 <strong>추가 수령</strong> 가능한 경우를 전부 조사합니다.
       </div>
 
       <div class="sec-label">경험 체크</div>
@@ -446,44 +397,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           </div></div>
         </div>
 
-        <!-- 2. 특수 직군 -->
-        <div class="card" data-id="2">
-          <div class="trigger" onclick="toggleCard(this)">
-            <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="card-icon">🪪</div>
-            <div class="card-body">
-              <div class="card-title">특수 직군 해당</div>
-              <div class="card-micro">단체보험·근재보험 미청구 누락 多</div>
-            </div>
-            <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#8C7460" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-          <div class="detail"><div class="det-inner">
-            <div class="det-row">
-              <span class="det-lbl">해당 직군 (복수 선택 가능)</span>
-              <div class="chips" data-name="job_type">
-                <div class="chip" onclick="toggleChip(this,'job_type')">경찰</div>
-                <div class="chip" onclick="toggleChip(this,'job_type')">군인</div>
-                <div class="chip" onclick="toggleChip(this,'job_type')">교직원</div>
-                <div class="chip" onclick="toggleChip(this,'job_type')">소방관</div>
-                <div class="chip" onclick="toggleChip(this,'job_type')">공무원</div>
-                <div class="chip" onclick="toggleChip(this,'job_type')">선원/어선원</div>
-                <div class="chip" onclick="toggleChip(this,'job_type')">기타</div>
-              </div>
-            </div>
-            <div class="det-row">
-              <span class="det-lbl">상황을 적어주세요</span>
-              <div class="guide-box"><ul>
-                <li>다친 경위</li>
-                <li>업무 관련 여부</li>
-                <li>보험 청구 이력</li>
-                <li>청구 후 처리결과</li>
-              </ul></div>
-              <textarea data-key="job_detail" rows="4" placeholder="위 항목을 참고해서 자유롭게 적어주세요"></textarea>
-            </div>
-          </div></div>
-        </div>
-
-        <!-- 3. 사고 -->
+        <!-- 2. 사고 -->
         <div class="card" data-id="3">
           <div class="trigger" onclick="toggleCard(this)">
             <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -498,7 +412,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
             <div class="det-row">
               <span class="det-lbl">사고 유형 (복수 선택 가능)</span>
               <div class="chips" data-name="acc_type">
-                <div class="chip" onclick="toggleChip(this,'acc_type')">교통사고 (100% 내과실, 이미 합의한 사건 등 포함)</div>
+                <div class="chip" onclick="toggleChip(this,'acc_type')">이미 합의한 교통사고</div>
+                <div class="chip" onclick="toggleChip(this,'acc_type')">내과실 100% 교통사고</div>
                 <div class="chip" onclick="toggleChip(this,'acc_type')">업무·산재</div>
                 <div class="chip" onclick="toggleChip(this,'acc_type')">출퇴근·출장</div>
                 <div class="chip" onclick="toggleChip(this,'acc_type')">시설·공공장소</div>
@@ -509,27 +424,19 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
             <div class="det-row">
               <span class="det-lbl">상황을 적어주세요</span>
               <div class="guide-box"><ul>
-                <li>사고 날짜</li>
-                <li>사고 경위 <strong>(상세하게)</strong></li>
-                <li>부위 / 진단명</li>
-                <li>입원 여부 및 기간</li>
-                <li>병원명</li>
-                <li>당시 개인보험 가입 여부</li>
-                <li>당시 단체보험 가입 여부</li>
-                <li>119 이송 여부</li>
+                <li>사고 날짜, 사고 경위 <strong>(상세하게)</strong></li>
+                <li>수상부위 / 진단명 / 병원명</li>
                 <li>교통사고인 경우 — 과실비율, 처리 보험사명, 담당자 연락처</li>
                 <li>배상보험 접수 여부 <strong>(사업장·공공시설·도로 하자 포함)</strong></li>
                 <li>접수 후 처리결과</li>
                 <li>공상처리 여부 <strong>(산재 접수 없이 사업주와 개인 합의한 경우)</strong></li>
-                <li>공상처리결과</li>
-                <li>MRI 후 주치의 이상없다는 소견 여부</li>
               </ul></div>
               <textarea data-key="acc_detail" rows="5" placeholder="위 항목을 참고해서 자유롭게 적어주세요"></textarea>
             </div>
           </div></div>
         </div>
 
-        <!-- 4. 질병 -->
+        <!-- 3. 질병 -->
         <div class="card" data-id="4">
           <div class="trigger" onclick="toggleCard(this)">
             <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -564,14 +471,14 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           </div></div>
         </div>
 
-        <!-- 5. 선천성 장애 -->
+        <!-- 4. 선천성 장애 -->
         <div class="card" data-id="5">
           <div class="trigger" onclick="toggleCard(this)">
             <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <div class="card-icon">🩺</div>
             <div class="card-body">
               <div class="card-title">선천성 장애</div>
-              <div class="card-micro">초기 청구부터 어렵고 등급 변경 후 미청구 多</div>
+              <div class="card-micro">초기 청구부터 어렵고 등급 변경 후 미청구 사례 흔함</div>
             </div>
             <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#8C7460" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           </div>
@@ -590,7 +497,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           </div></div>
         </div>
 
-        <!-- 6. 사망 -->
+        <!-- 5. 사망 -->
         <div class="card" data-id="6">
           <div class="trigger" onclick="toggleCard(this)">
             <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -616,34 +523,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           </div></div>
         </div>
 
-        <!-- 7. 주변인 -->
-        <div class="card" data-id="7">
-          <div class="trigger" onclick="toggleCard(this)">
-            <div class="chkbox"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#FAF4E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="card-icon">👥</div>
-            <div class="card-body">
-              <div class="card-title">주변인 관련</div>
-              <div class="card-micro">당사자가 아닌 가족·지인 상황도 접수 가능</div>
-            </div>
-            <div class="chevron"><svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#8C7460" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-          <div class="detail"><div class="det-inner">
-            <div class="det-row">
-              <span class="det-lbl">상황을 적어주세요</span>
-              <div class="guide-box"><ul>
-                <li>해당인과의 관계</li>
-                <li>위 항목 중 해당되는 상황 (사고·질병·장애·사망 등)</li>
-                <li>보험 청구 여부 및 처리결과</li>
-              </ul></div>
-              <textarea data-key="around_detail" rows="4" placeholder="주변에 위 항목들에 해당하는 분이 계시면 자유롭게 적어주세요"></textarea>
-            </div>
-          </div></div>
-        </div>
-
       </div><!-- /cards -->
 
-      <div class="sec-label" style="margin-top:24px">위 항목 외 기타 상황</div>
-      <textarea id="extraMemo" rows="5" placeholder="보험 보상·손해배상과 관련해 피해를 입었거나, 반대로 가해자가 되어 보상·배상을 해준 경우도 모두 포함해서 자유롭게 적어주세요.&#10;(가해자인 경우에도 보험 처리가 가능한 경우가 있습니다)"></textarea>
+      <div class="sec-label" style="margin-top:24px">위 항목 외 기타 사항</div>
+      <textarea id="extraMemo" rows="5" placeholder="위 항목에 해당하지 않는 상황도 자유롭게 적어주세요."></textarea>
 
       <div class="sec-label" style="margin-top:24px">연락처</div>
       <div class="contact-box">
@@ -729,33 +612,14 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzOjLkQT_U5sgGMyBX0OEfvcQnuBgC9otWwOPR7Z5JI21GNKkYFiDaCy7V1ddT0F1ww/exec';
-const TOTAL = 7;
+const TOTAL = 5;
 const S = { checked: new Set(), chips: {}, radios: {} };
 
 /* URL 파라미터에서 담당자 이메일 읽기 — 없으면 기본값 */
 const STAFF_EMAIL = new URLSearchParams(window.location.search).get('to') || 'stayz@naver.com';
 
-/* foot 탭 잠금 */
-function tapFoot(el) {
-  el.classList.add('tapped');
-  el.onclick = null; // 한 번 탭하면 재탭 불가
-  const all  = document.querySelectorAll('.foot-tap');
-  const done = [...all].every(r => r.classList.contains('tapped'));
-  if (done) {
-    const btn  = document.getElementById('nextBtn');
-    const hint = document.getElementById('footHint');
-    hint.classList.add('done');
-    btn.disabled = false;
-    btn.style.opacity = '1';
-  }
-}
-
-/* 버튼 클릭 — 모달 먼저 */
+/* 버튼 클릭 — 바로 다음 화면 */
 function handleNext() {
-  document.getElementById('modalOverlay').classList.add('show');
-}
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('show');
   goTo('s1','s2');
 }
 
